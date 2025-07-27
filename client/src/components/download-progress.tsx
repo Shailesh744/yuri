@@ -76,12 +76,27 @@ function DownloadItem({ downloadId, onComplete }: DownloadItemProps) {
         <span className="text-sm font-medium text-gray-900 truncate">
           {progress.filename}
         </span>
-        <span className="text-sm text-gray-500">
-          {progress.status === 'completed' ? 'Complete' : `${progress.progress}%`}
-        </span>
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-gray-500">
+            {progress.status === 'completed' ? 'Complete' : 
+             progress.status === 'error' ? 'Error' : `${progress.progress}%`}
+          </span>
+          {progress.status === 'completed' && (
+            <a
+              href={`/api/download/${downloadId}/file`}
+              download={progress.filename}
+              className="inline-flex items-center px-2 py-1 text-xs font-medium text-white bg-youtube-success hover:bg-green-600 rounded transition-colors"
+            >
+              Download
+            </a>
+          )}
+        </div>
       </div>
       
-      <Progress value={progress.progress} className="w-full h-2 mb-2" />
+      <Progress 
+        value={progress.progress} 
+        className={`w-full h-2 mb-2 ${progress.status === 'error' ? 'bg-red-100' : ''}`} 
+      />
       
       <div className="flex justify-between text-xs text-gray-500">
         <span>
@@ -89,6 +104,9 @@ function DownloadItem({ downloadId, onComplete }: DownloadItemProps) {
         </span>
         {progress.status === 'downloading' && (
           <span>{progress.speed}</span>
+        )}
+        {progress.status === 'error' && (
+          <span className="text-red-500">Download failed</span>
         )}
       </div>
     </div>
